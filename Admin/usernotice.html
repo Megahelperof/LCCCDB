@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Management</title>
+</head>
+<body>
+    <h2>Student Notices</h2>
+    <div id="noticeContainer"></div>
+
+    <script>
+        async function fetchNotices() {
+            try {
+                const response = await fetch('/admin/notices');
+                const data = await response.json();
+                if (data.success) {
+                    displayNotices(data.notices);
+                } else {
+                    console.error('Failed to fetch notices:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching notices:', error);
+            }
+        }
+
+        function displayNotices(notices) {
+            const container = document.getElementById('noticeContainer');
+            container.innerHTML = ''; // Clear existing content
+            notices.forEach(notice => {
+                const noticeDiv = document.createElement('div');
+                noticeDiv.innerHTML = `
+                    <h3>Student Number: ${notice.studentNumber}</h3>
+                    <pre id="notice-${notice.fileName}">${notice.content}</pre>
+                    <button onclick="editNotice('${notice.fileName}')">✏️</button>
+                    <button onclick="removeNotice('${notice.fileName}')">❌</button>
+                `;
+                container.appendChild(noticeDiv);
+            });
+        }
+
+        async function editNotice(fileName) {
+            const noticeElement = document.getElementById(`notice-${fileName}`);
+            const currentNotice = noticeElement.textContent;
+            const newNotice = prompt('Edit notice:', currentNotice);
+            if (newNotice !== null) {
+                try {
+                    const response = await fetch(`/admin/editNotice/${encodeURIComponent(fileName)}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ newNotice })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        noticeElement.textContent = newNotice;
+                    } else {
+                        console.error('Failed to edit notice:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error editing notice:', error);
+                }
+            }
+        }
+
+        async function removeNotice(fileName) {
+            if (confirm('Are you sure you want to remove this notice?')) {
+                try {
+                    const response = await fetch(`/admin/removeNotice/${encodeURIComponent(fileName)}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        document.getElementById(`notice-${fileName}`).parentElement.remove();
+                    } else {
+                        console.error('Failed to remove notice:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error removing notice:', error);
+                }
+            }
+        }
+
+        // Initial fetch of student notices
+        fetchNotices();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Admin Settings</h1>
+    <form id="lateTimeForm">
+        
+        <label for="startTime">Start Time:</label>
+        <input type="time" id="startTime" name="startTime" required><br><br>
+        
+        <label for="lateTime">Late Time:</label>
+        <input type="time" id="lateTime" name="lateTime" required><br><br>
+        
+        <button type="submit">Update Late Times</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('lateTimeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const startTime = document.getElementById('startTime').value;
+            const lateTime = document.getElementById('lateTime').value;
+
+            try {
+                const response = await axios.post('/setLateTimes', {
+                    newStartTime: startTime,
+                    newLateTime: lateTime
+                });
+
+                document.getElementById('message').textContent = response.data.message;
+            } catch (error) {
+                document.getElementById('message').textContent = 'Error: ' + error.response.data.message;
+            }
+        });
+    </script>
+</body>
+</html>

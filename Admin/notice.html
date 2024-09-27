@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Notice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input, textarea, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Notice</h1>
+    <form id="noticeForm">
+        <input type="text" id="studentNumber" placeholder="Student Number" required>
+        <textarea id="noticeText" placeholder="Enter notice" rows="4" required></textarea>
+        <button type="submit">Submit Notice</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const studentNumber = document.getElementById('studentNumber').value;
+            const noticeText = document.getElementById('noticeText').value;
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const response = await fetch('/admin/submitNotice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ studentNumber, noticeText }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    messageDiv.textContent = 'Notice submitted successfully';
+                    messageDiv.className = 'success';
+                } else {
+                    messageDiv.textContent = data.message || 'Failed to submit notice';
+                    messageDiv.className = 'error';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.textContent = 'An error occurred while submitting the notice';
+                messageDiv.className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>

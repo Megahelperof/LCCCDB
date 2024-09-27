@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/Admin/dashboard.html">Dashboard</a></li>
+            <li><a href="/Admin/manualviolations.html">Manual Violations</a></li>
+            <li><a href="/Admin/notice.html">Notices</a></li>
+            <li><a href="/Admin/searchdate.html">Search by Date</a></li>
+            <li><a href="/Admin/settings.html">Settings</a></li>
+            <li><a href="/Admin/studentsearch.html">Student Search</a></li>
+            <li><a href="/Admin/usercreate.html">Create User</a></li>
+            <li><a href="/Admin/statistics.html">Statistics</a></li>
+            <li><a href="/Admin/roleassignment.html">Role Assignment</a></li>
+            <li><a href="/Admin/activeusers.html">Active Users</a></li>
+        </ul>
+    </nav>
+
+    <h1>Welcome to the Admin Dashboard</h1>
+
+    <div id="content">
+        <!-- Content will be loaded here based on the selected page -->
+    </div>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            // Your config here
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (!user) {
+                window.location.href = '/Admin/AdminUser/login.html';
+            }
+        });
+
+        // Function to load content
+        function loadContent(page) {
+            fetch(page)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(error => console.error('Error loading content:', error));
+        }
+
+        // Load default content (you can change this to any page you want to show by default)
+        loadContent('/Admin/statistics.html');
+    </script>
+</body>
+</html>

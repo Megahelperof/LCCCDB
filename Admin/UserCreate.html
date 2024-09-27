@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Signup</title>
+    <style>
+        .grade-section {
+            display: none;
+        }
+        .grade-section.active {
+            display: block;
+        }
+    </style>
+    <script>
+        function toggleSections(grade) {
+            document.querySelectorAll('.grade-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`grade-${grade}-sections`).classList.add('active');
+        }
+
+        function rememberSelection() {
+            const form = document.getElementById('signupForm');
+            localStorage.setItem('rememberedGrade', form.grade.value);
+            localStorage.setItem('rememberedSection', form.section.value);
+        }
+
+        function loadRememberedSelection() {
+            const rememberedGrade = localStorage.getItem('rememberedGrade');
+            const rememberedSection = localStorage.getItem('rememberedSection');
+            
+            if (rememberedGrade) {
+                document.querySelector(`input[name="grade"][value="${rememberedGrade}"]`).checked = true;
+                toggleSections(rememberedGrade);
+            }
+            
+            if (rememberedSection) {
+                document.querySelector(`input[name="section"][value="${rememberedSection}"]`).checked = true;
+            }
+        }
+
+        async function signUp(event) {
+            event.preventDefault();
+            const form = document.getElementById('signupForm');
+            const studentNumber = form.studentNumber.value;
+            const fullName = form.fullName.value;
+            const grade = form.grade.value;
+            const section = form.section.value;
+
+            if (!studentNumber || !fullName || !grade || !section) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/createStudentFolder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ studentNumber, fullName, grade, section })
+                });
+
+                if (!response.ok) throw new Error("Network response was not ok");
+
+                alert("Signup successful! Folder created and entrance logged.");
+                if (form.remember.checked) {
+                    rememberSelection();
+                } else {
+                    localStorage.removeItem('rememberedGrade');
+                    localStorage.removeItem('rememberedSection');
+                }
+            } catch (error) {
+                console.error("Error during signup:", error);
+                alert("Error during signup. Please try again.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRememberedSelection);
+    </script>
+</head>
+<body>
+    <h1>Student Signup</h1>
+    <form id="signupForm" onsubmit="signUp(event);">
+        <label for="studentNumber">Student Number:</label>
+        <input type="text" id="studentNumber" name="studentNumber" required><br><br>
+        
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" required><br><br>
+        
+        <fieldset>
+            <legend>Grade:</legend>
+            <input type="radio" id="grade7" name="grade" value="7" required onclick="toggleSections(7)">
+            <label for="grade7">Grade 7</label>
+            <input type="radio" id="grade8" name="grade" value="8" required onclick="toggleSections(8)">
+            <label for="grade8">Grade 8</label>
+            <input type="radio" id="grade9" name="grade" value="9" required onclick="toggleSections(9)">
+            <label for="grade9">Grade 9</label>
+            <input type="radio" id="grade10" name="grade" value="10" required onclick="toggleSections(10)">
+            <label for="grade10">Grade 10</label>
+        </fieldset>
+
+        <fieldset id="grade-7-sections" class="grade-section">
+            <legend>Grade 7 Sections:</legend>
+            <input type="radio" id="7A" name="section" value="A" required>
+            <label for="7A">Section A</label>
+            <input type="radio" id="7B" name="section" value="B" required>
+            <label for="7B">Section B</label>
+            <input type="radio" id="7C" name="section" value="C" required>
+            <label for="7C">Section C</label>
+            <input type="radio" id="7D" name="section" value="D" required>
+            <label for="7D">Section D</label>
+        </fieldset>
+
+        <fieldset id="grade-8-sections" class="grade-section">
+            <legend>Grade 8 Sections:</legend>
+            <input type="radio" id="8A" name="section" value="A" required>
+            <label for="8A">Section A</label>
+            <input type="radio" id="8B" name="section" value="B" required>
+            <label for="8B">Section B</label>
+            <input type="radio" id="8C" name="section" value="C" required>
+            <label for="8C">Section C</label>
+            <input type="radio" id="8D" name="section" value="D" required>
+            <label for="8D">Section D</label>
+        </fieldset>
+
+        <fieldset id="grade-9-sections" class="grade-section">
+            <legend>Grade 9 Sections:</legend>
+            <input type="radio" id="9A" name="section" value="A" required>
+            <label for="9A">Section A</label>
+            <input type="radio" id="9B" name="section" value="B" required>
+            <label for="9B">Section B</label>
+            <input type="radio" id="9C" name="section" value="C" required>
+            <label for="9C">Section C</label>
+            <input type="radio" id="9D" name="section" value="D" required>
+            <label for="9D">Section D</label>
+        </fieldset>
+
+        <fieldset id="grade-10-sections" class="grade-section">
+            <legend>Grade 10 Sections:</legend>
+            <input type="radio" id="10A" name="section" value="A" required>
+            <label for="10A">Section A</label>
+            <input type="radio" id="10B" name="section" value="B" required>
+            <label for="10B">Section B</label>
+            <input type="radio" id="10C" name="section" value="C" required>
+            <label for="10C">Section C</label>
+            <input type="radio" id="10D" name="section" value="D" required>
+            <label for="10D">Section D</label>
+        </fieldset>
+
+        <br>
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember">Remember my grade and section</label>
+        <br><br>
+        
+        <button type="submit">Sign Up</button>
+    </form>
+</body>
+</html>

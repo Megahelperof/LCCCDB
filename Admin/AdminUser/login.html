@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <h2>Admin Login</h2>
+    <form id="loginForm">
+        <input type="text" id="userId" placeholder="User ID" required>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        // Your Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyD0CXdSmkEluOKhTKPJtDBQji1ej70G8LY",
+    authDomain: "lcccdb-891ca.firebaseapp.com",
+    projectId: "lcccdb-891ca",
+    storageBucket: "lcccdb-891ca.appspot.com",
+    messagingSenderId: "1076434466555",
+    appId: "1:1076434466555:web:b214cfc5c5a27bbbcba25e",
+    measurementId: "G-3Q4W4GQKSP"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Initialize Firestore
+const db = firebase.firestore();
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value;  // Get User ID input
+            const username = document.getElementById('username').value;  // Get Username input
+            const password = document.getElementById('password').value;  // Get Password input
+
+            // Reference to Firestore collection Admin/AdminUser/{userId}
+            const userRef = db.collection('Admin').doc('AdminUser').collection(userId).doc('info');
+
+            // Retrieve user data from Firestore
+            userRef.get().then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    // Check if username and password match
+                    if (userData.username === username && userData.password === password) {
+                        alert('Login successful');
+                        window.location.href = '/dashboard';  // Redirect to dashboard
+                    } else {
+                        alert('Invalid username or password');
+                    }
+                } else {
+                    alert('User ID not found');
+                }
+            }).catch((error) => {
+                console.error('Error accessing user data: ', error);
+                alert('Error accessing user data');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Users</title>
+</head>
+<body>
+    <h2>Active Users</h2>
+    <div id="activeUsersContainer"></div>
+
+    <script>
+        // This part requires server-side implementation to track active sessions
+        // For demonstration, we'll use a mock data structure
+        const activeUsers = [
+            { sessionId: 'abc123', location: 'New York', chromeSession: 'Chrome/91.0.4472.124' },
+            { sessionId: 'def456', location: 'London', chromeSession: 'Chrome/92.0.4515.107' },
+            { sessionId: 'ghi789', location: 'Tokyo', chromeSession: 'Chrome/93.0.4577.63' }
+        ];
+
+        function displayActiveUsers() {
+            const container = document.getElementById('activeUsersContainer');
+            activeUsers.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.innerHTML = `
+                    <p>Session ID: ${user.sessionId}</p>
+                    <p>Location: ${user.location}</p>
+                    <p>Chrome Session: ${user.chromeSession}</p>
+                    <hr>
+                `;
+                container.appendChild(userDiv);
+            });
+        }
+
+        displayActiveUsers();
+    </script>
+</body>
+</html>
